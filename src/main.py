@@ -1,6 +1,6 @@
 import requests
 from requests import Response
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, Tag, exceptions
 from typing import Any
 
 from utils import GameData, append_to_json
@@ -15,14 +15,14 @@ headers: dict[str, str] = {
     "Referer": "https://store.steampowered.com/",
 }
 
-if __name__ == "__main__":
-    try:
-        response: Response = requests.get(root_search_url + name, headers=headers)
 
+def get_id_from_name(name: str) -> str:
+    response: Response = requests.get(root_search_url + name, headers=headers)
+
+    try:
         if response.status_code == 200:
             soup: BeautifulSoup = BeautifulSoup(response.text, "html.parser")
 
-            # Find ID
             first_result: Tag | None = soup.find("a", class_="search_result_row")
 
             if first_result:
@@ -39,36 +39,62 @@ if __name__ == "__main__":
 
                 print(f"Found Match: {game_title}")
                 print(f"AppID: {app_id}")
-
-                # Get game data
-                json_url: str = (
-                    f"https://store.steampowered.com/api/appdetails?appids={app_id}&cc=br&l=pt"
-                )
-                api_response: Response = requests.get(json_url, headers=headers)
-                data: dict[str, Any] = api_response.json()
-
-                if data and data.get(app_id, {}).get("success"):
-                    game_info: GameData = data[app_id]["data"]
-                    price: str = game_info.get("price_overview", {}).get(
-                        "final_formatted", "Free"
-                    )
-                    relevant_data: dict[str, Any] = {
-                        "name": game_info.get("name"),
-                        "appid": app_id,
-                        "price": game_info.get("price_overview", {}).get(
-                            "final_formatted", "Free"
-                        ),
-                        "developers": ", ".join(game_info.get("developers", [])),
-                        "genres": ", ".join(
-                            [g["description"] for g in game_info.get("genres", [])]
-                        ),
-                    }
-                    append_to_json(relevant_data)
+                return app_id
 
         elif response.status_code == 429:
             print("Rate limit!!!")
-            pass
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"Não foi possível encontrar o jogo {name}")
+        print(f"Error: {e}")
+
+    return ""
+
+
+def get_search_url(id: str) -> str:
+    return f"https://store.steampowered.com/api/appdetails?appids={id}&cc=br&l=pt"
+
+
+def get_data_from_id(id: str) -> GameData:
+    try:
+        # Get game data
+        json_url: str = get_search_url(id)
+
+        response: Response = requests.get(json_url, headers=headers)
+
+        if response.status_code == 200:
+            data: dict[str, Any] = response.json()
+
+            if data and data.get(id, {}).get("success"):
+                game_info: GameData = data[id]["data"]
+                price: str = game_info.get("price_overview", {}).get(
+                    "final_formatted", "Free"
+                )
+
+                return {
+                    "name": game_info.get("name"),
+                    "appid": id,
+                    "price": game_info.get("price_overview", {}).get(
+                        "final_formatted", "Free"
+                    ),
+                    "developers": ", ".join(game_info.get("developers", [])),
+                    "genres": ", ".join(
+                        [g["description"] for g in game_info.get("genres", [])]
+                    ),
+                }
+
+        elif response.status_code == 429:
+            print("Rate limit!!!")
+
+    except Exception as e:
+        print(f"Não foi possível encontrar o jogo {name}")
+        print(f"Error: {e}")
+
+    return {}
+
+
+if __name__ == "__main__":
+    pid: str = get_id_from_name(name)
+    data: GameData = get_data_from_id(pid)
+    append_to_json(data)
 
