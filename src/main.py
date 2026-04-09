@@ -1,4 +1,5 @@
 import requests
+from bs4 import BeautifulSoup
 
 name: str = "Stardew Valley"
 root_search_url: str = "https://store.steampowered.com/search/?term="
@@ -18,9 +19,20 @@ try:
     response: Response = requests.get(root_search_url + name, headers=headers)
     
     if response.status_code == 200:
-        pass
+        soup: BeautifulSoup = BeautifulSoup(response.text, 'html.parser')
+        
+        first_result: Tag | None = soup.find('a', class_='search_result_row')
+        
+        if first_result:
+            app_id: str | list[str] | None = first_result.get('data-ds-appid')
+            game_title: str = first_result.find('span', class_='title').text
+            
+            print(f"Found Match: {game_title}")
+            print(f"AppID: {app_id}")
+            
+            json_url: str = f"https://store.steampowered.com/api/appdetails?appids={app_id}&cc=br&l=pt"
     elif response.status_code == 429:
-        # Rate limit
+        print("Rate limit!!!")
         pass
         
 except Exception as e:
