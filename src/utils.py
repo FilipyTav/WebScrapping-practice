@@ -1,27 +1,24 @@
 import json
 import os
+from typing import TypeAlias
+
+GameData: TypeAlias = dict[str, any]
 
 json_file_name: str = "game_data.json"
 
-def save_to_json(data: dict[str, Any], filename: str = json_file_name) -> None:
+def save_to_json(data: GameData, filename: str = json_file_name) -> None:
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     print(f"Data successfully saved to {filename}")
 
-def append_to_json(new_data: dict[str, Any], filename: str = json_file_name) -> None:
-    if os.path.exists(filename):
-        with open(filename, 'r', encoding='utf-8') as f:
-            try:
-                data_list = json.load(f)
-                if not isinstance(data_list, list):
-                    data_list = [data_list]
-            except json.JSONDecodeError:
-                data_list = []
-    else:
+def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
+    data_list: GameData | list[GameData] = dict_from_json()
+    if not data_list:
         data_list = []
+    elif not isinstance(data_list, list):
+        data_list = [data_list]
 
     data_list.append(new_data)
-
     save_to_json(data_list, filename)
         
     print(f"Data successfully appended to {filename}")
@@ -29,14 +26,13 @@ def append_to_json(new_data: dict[str, Any], filename: str = json_file_name) -> 
 def key_in_json() -> bool:
     return True
 
-def dict_from_json(filename: str = json_file_name) -> dict[str, any]:
+def dict_from_json(filename: str = json_file_name) -> GameData | list[GameData]:
     if os.path.exists(filename):
         with open(filename, 'r', encoding='utf-8') as f:
             try:
                 return json.load(f)
             except json.JSONDecodeError as e:
                 print("Error: ", e)
-                return {}
     return {}
 
 # In cents
