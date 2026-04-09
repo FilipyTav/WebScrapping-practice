@@ -1,15 +1,17 @@
 import json
 import os
-from typing import TypeAlias
+from typing import TypeAlias, Any
 
-GameData: TypeAlias = dict[str, any]
+GameData: TypeAlias = dict[str, Any]
 
 json_file_name: str = "game_data.json"
 
+
 def save_to_json(data: GameData, filename: str = json_file_name) -> None:
-    with open(filename, 'w', encoding='utf-8') as f:
+    with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     print(f"Data successfully saved to {filename}")
+
 
 def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
     data_list: GameData | list[GameData] = dict_from_json()
@@ -20,21 +22,25 @@ def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
 
     data_list.append(new_data)
     save_to_json(data_list, filename)
-        
+
     print(f"Data successfully appended to {filename}")
+
 
 def key_in_json() -> bool:
     return True
 
+
 def dict_from_json(filename: str = json_file_name) -> GameData | list[GameData]:
     if os.path.exists(filename):
-        with open(filename, 'r', encoding='utf-8') as f:
+        with open(filename, "r", encoding="utf-8") as f:
             try:
                 return json.load(f)
             except json.JSONDecodeError as e:
                 print("Error: ", e)
     return {}
 
+
 # In cents
 def format_price(value: int) -> str:
-    return f"R$ {value / 100:.2f}".replace('.', ',')
+    return f"R$ {value / 100:.2f}".replace(".", ",")
+
