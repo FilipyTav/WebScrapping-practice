@@ -16,7 +16,7 @@ def save_to_json(
 
 
 def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
-    data_list: GameData | list[GameData] = dict_from_json()
+    data_list: GameData | list[GameData] = get_data_from_json()
     if not data_list:
         data_list = []
     elif not isinstance(data_list, list):
@@ -28,11 +28,18 @@ def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
     print(f"Data successfully appended to {filename}")
 
 
-def key_in_json() -> bool:
-    return True
+def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
+    if isinstance(data, list):
+        for d in data:
+            if d["appid"] == id:
+                return True
+    else:
+        return data["appid"] == id
+
+    return False
 
 
-def dict_from_json(filename: str = json_file_name) -> GameData | list[GameData]:
+def get_data_from_json(filename: str = json_file_name) -> GameData | list[GameData]:
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             try:
