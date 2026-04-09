@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from utils import save_to_json
+from utils import save_to_json, append_to_json
 
 name: str = "Stardew Valley"
 root_search_url: str = "https://store.steampowered.com/search/?term="
@@ -46,7 +46,8 @@ if __name__ == '__main__':
                         "developers": ", ".join(game_info.get("developers", [])),
                         "genres": ", ".join([g["description"] for g in game_info.get("genres", [])])
                     }
-                    save_to_json(relevant_data)
+                    append_to_json(relevant_data)
+                    # save_to_json(relevant_data)
         elif response.status_code == 429:
             print("Rate limit!!!")
             pass
