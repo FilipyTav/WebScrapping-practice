@@ -7,7 +7,9 @@ GameData: TypeAlias = dict[str, Any]
 json_file_name: str = "game_data.json"
 
 
-def save_to_json(data: GameData, filename: str = json_file_name) -> None:
+def save_to_json(
+    data: GameData | list[GameData], filename: str = json_file_name
+) -> None:
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     print(f"Data successfully saved to {filename}")
@@ -43,4 +45,3 @@ def dict_from_json(filename: str = json_file_name) -> GameData | list[GameData]:
 # In cents
 def format_price(value: int) -> str:
     return f"R$ {value / 100:.2f}".replace(".", ",")
-
