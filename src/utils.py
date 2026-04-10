@@ -1,6 +1,6 @@
 import json
 import os
-from typing import TypeAlias, Any, TypedDict, cast
+from typing import TypedDict, cast
 
 
 class GameData(TypedDict):
@@ -49,14 +49,22 @@ def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
     return False
 
 
-def get_data_from_json(filename: str = json_file_name) -> GameData | list[GameData]:
+def get_data_from_jsonid(id: str, data: list[GameData]) -> GameData:
+    for d in data:
+        if d["appid"] == id:
+            return d
+
+    return cast(GameData, {})
+
+
+def get_data_from_json(filename: str = json_file_name) -> list[GameData]:
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             try:
                 return json.load(f)
             except json.JSONDecodeError as e:
                 print("Error: ", e)
-    return cast(GameData, {})
+    return []
 
 
 # In cents
