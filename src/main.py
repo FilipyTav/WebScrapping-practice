@@ -4,6 +4,7 @@ from utils import (
     append_to_json,
     get_data_from_json,
     get_data_from_jsonid,
+    print_game_info,
     should_update_cache,
     update_timestamp,
 )
@@ -20,13 +21,16 @@ if __name__ == "__main__":
 
     if query_game:
         if cache_updated:
-            print("Jogo já presente no cache: ", query_game["name"])
+            print("Jogo presente no cache...")
         else:
-            update_json_entry(pid)
+            print("Atualizando cache...")
+            query_game = update_json_entry(pid)
 
+        print_game_info(query_game)
         exit()
 
     data: GameData = get_data_from_id(pid)
+    print_game_info(data)
     append_to_json(data)
 
     update_timestamp()

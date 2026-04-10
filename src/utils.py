@@ -91,3 +91,30 @@ def update_timestamp() -> None:
     """Saves the current time to the metadata file."""
     with open(METADATA_FILE, "w") as f:
         json.dump({"last_update": time.time()}, f)
+
+
+def print_game_info(game: GameData) -> None:
+    separator = "-" * 40
+
+    devs: str = ", ".join(game["developers"])
+    genres: str = ", ".join(game["genres"])
+
+    raw_score: int = game["metacritic_score"]
+    score: str = f"{raw_score}/100" if raw_score >= 0 else "--------"
+
+    print()
+    print(separator)
+    print(f"NOME: {game['name'].upper()}")
+    print(separator)
+
+    print(
+        f"ID:           {game['appid']}\n"
+        f"Preço:        {game['price']}\n"
+        f"Lançamento:   {game['release_date']}\n"
+        f"Devs:         {devs}\n"
+        f"Gêneros:      {genres}\n"
+        f"Score:        {score}\n"
+        f"Website:      {game.get('website', '--------')}"
+    )
+
+    print(separator + "\n")

@@ -105,11 +105,12 @@ def get_data_from_id(id: str) -> GameData:
     return cast(GameData, {})
 
 
-def update_json_entry(id: str, filename: str = CACHE_FILE) -> None:
+def update_json_entry(id: str, filename: str = CACHE_FILE) -> GameData:
     data: list[GameData] = get_data_from_json(filename)
-    _, i = get_data_from_jsonid(id, data)
+    game_info, i = get_data_from_jsonid(id, data)
 
     new_info: GameData = get_data_from_id(id)
     data[i].update(new_info)
 
     save_to_json(data)
+    return game_info
