@@ -2,6 +2,7 @@ from search import get_data_from_id, get_id_from_name, update_json_entry
 from utils import (
     GameData,
     append_to_json,
+    clear_screen,
     get_data_from_json,
     get_data_from_jsonid,
     print_game_info,
@@ -10,6 +11,7 @@ from utils import (
 )
 
 if __name__ == "__main__":
+    clear_screen()
     game_name: str = input("Qual jogo deseja procurar?\n> ").strip()
 
     cached_games: list[GameData] = get_data_from_json()
