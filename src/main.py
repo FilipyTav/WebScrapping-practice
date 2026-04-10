@@ -1,4 +1,4 @@
-from search import get_data_from_id, get_id_from_name
+from search import get_data_from_id, get_id_from_name, update_json_entry
 from utils import (
     GameData,
     append_to_json,
@@ -18,8 +18,12 @@ if __name__ == "__main__":
 
     cache_updated: bool = not should_update_cache()
 
-    if query_game and cache_updated:
-        print("Jogo já presente no cache: ", query_game["name"])
+    if query_game:
+        if cache_updated:
+            print("Jogo já presente no cache: ", query_game["name"])
+        else:
+            update_json_entry(pid)
+
         exit()
 
     data: GameData = get_data_from_id(pid)
