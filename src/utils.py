@@ -23,13 +23,14 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 CACHE_FILE: Path = CACHE_DIR / "game_data.json"
 METADATA_FILE: Path = CACHE_DIR / "cache_metadata.json"
+MD_FILE = CACHE_DIR / "game_info.md"
 SECONDS_IN_DAY: int = 60 * 60 * 24
 
 
 def save_to_json(data: GameData | list[GameData], filename: Path = CACHE_FILE) -> None:
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
-    print(f"Dados salvos em {filename}")
+    print(f"Cache salvo em {filename}")
 
 
 def append_to_json(new_data: GameData, filename: Path = CACHE_FILE) -> None:
@@ -126,6 +127,37 @@ def print_game_info(game: GameData) -> None:
 
     print(separator + "\n")
 
+    save_to_markdown(game)
+
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
+
+
+def save_to_markdown(data: GameData, filename: Path = MD_FILE) -> None:
+    devs: str = ", ".join(data["developers"])
+    genres: str = ", ".join(data["genres"])
+
+    lines = [
+        f"## {data['name']}",
+        f"- **ID:** `{data['appid']}`",
+        f"- **Preço:** {data['price']}",
+        f"- **Lançamento:** {data['release_date']}",
+    ]
+
+    if data["metacritic_score"] >= 0:
+        lines.append(f"- **Metacritic:** {data['metacritic_score']}/100")
+
+    lines.extend(
+        [
+            f"- **Devs:** {devs}",
+            f"- **Gêneros:** {genres}",
+            f"- **Website:** [{data['website']}]({data['website']})",
+            "\n---\n",  # Separator
+        ]
+    )
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
+    print(f"Jogo '{data['name']}' salvo em: {filename}")
