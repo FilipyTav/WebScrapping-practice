@@ -1,8 +1,18 @@
 import json
 import os
-from typing import TypeAlias, Any
+from typing import TypeAlias, Any, TypedDict, cast
 
-GameData: TypeAlias = dict[str, Any]
+
+class GameData(TypedDict):
+    name: str
+    appid: str
+    price: str
+    developers: list[str]
+    genres: list[str]
+    website: str
+    metacritic_score: int
+    release_date: str
+
 
 json_file_name: str = "game_data.json"
 
@@ -46,7 +56,7 @@ def get_data_from_json(filename: str = json_file_name) -> GameData | list[GameDa
                 return json.load(f)
             except json.JSONDecodeError as e:
                 print("Error: ", e)
-    return {}
+    return cast(GameData, {})
 
 
 # In cents

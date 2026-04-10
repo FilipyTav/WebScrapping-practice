@@ -1,7 +1,7 @@
 import requests
 from requests import Response
 from bs4 import BeautifulSoup, Tag
-from typing import Any
+from typing import Any, cast
 
 from utils import GameData
 
@@ -52,7 +52,7 @@ def get_id_from_name(name: str) -> str:
 
 
 def get_search_url(id: str) -> str:
-    return f"https://store.steampowered.com/api/appdetails?appids={id}&cc=br&l=pt"
+    return f"https://store.steampowered.com/api/appdetails?appids={id}&cc=br&l=pt-BR"
 
 
 def get_data_from_id(id: str) -> GameData:
@@ -66,21 +66,22 @@ def get_data_from_id(id: str) -> GameData:
             data: dict[str, Any] = response.json()
 
             if data and data.get(id, {}).get("success"):
-                game_info: GameData = data[id]["data"]
+                game_info: dict[str, Any] = data[id]["data"]
                 price: str = game_info.get("price_overview", {}).get(
                     "final_formatted", "Free"
                 )
 
                 return {
-                    "name": game_info.get("name"),
+                    "name": game_info.get("name", ""),
                     "appid": id,
-                    "price": game_info.get("price_overview", {}).get(
-                        "final_formatted", "Free"
+                    "price": price,
+                    "developers": game_info.get("developers", []),
+                    "genres": [g["description"] for g in game_info.get("genres", [])],
+                    "website": game_info.get("website", ""),
+                    "metacritic_score": game_info.get("metacritic", {}).get(
+                        "score", -1
                     ),
-                    "developers": ", ".join(game_info.get("developers", [])),
-                    "genres": ", ".join(
-                        [g["description"] for g in game_info.get("genres", [])]
-                    ),
+                    "release_date": game_info.get("release_date", {}).get("date", "Em breve!")
                 }
 
         elif response.status_code == 429:
@@ -90,4 +91,4 @@ def get_data_from_id(id: str) -> GameData:
         print(f"Não foi possível encontrar o jogo {name}")
         print(f"Error: {e}")
 
-    return {}
+    return cast(GameData, {})
