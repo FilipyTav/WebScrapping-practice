@@ -4,19 +4,25 @@ from utils import (
     append_to_json,
     get_data_from_json,
     get_data_from_jsonid,
+    should_update_cache,
+    update_timestamp,
 )
 
 if __name__ == "__main__":
     game_name: str = input("Qual jogo deseja procurar?\n> ").strip()
 
-    current_games: list[GameData] = get_data_from_json()
+    cached_games: list[GameData] = get_data_from_json()
 
     pid: str = get_id_from_name(game_name)
-    query_game, _ = get_data_from_jsonid(pid, current_games)
+    query_game, _ = get_data_from_jsonid(pid, cached_games)
 
-    if query_game:
-        print("Jogo encontrado: ", query_game["name"])
+    cache_updated: bool = not should_update_cache()
+
+    if query_game and cache_updated:
+        print("Jogo já presente no cache: ", query_game["name"])
         exit()
 
     data: GameData = get_data_from_id(pid)
     append_to_json(data)
+
+    update_timestamp()
