@@ -1,4 +1,4 @@
-from search import get_data_from_id, get_id_from_name, update_json_entry
+from search import get_data_from_id, get_id_from_name
 from utils import (
     GameData,
     append_to_json,
@@ -16,7 +16,6 @@ if __name__ == "__main__":
 
     if query_game:
         print("Jogo encontrado: ", query_game["name"])
-        # update_json_entry(pid)
         exit()
 
     data: GameData = get_data_from_id(pid)

@@ -5,7 +5,7 @@ from typing import Any, cast
 
 from utils import (
     GameData,
-    cache_file,
+    CACHE_FILE,
     get_data_from_json,
     get_data_from_jsonid,
     save_to_json,
@@ -105,7 +105,7 @@ def get_data_from_id(id: str) -> GameData:
     return cast(GameData, {})
 
 
-def update_json_entry(id: str, filename: str = cache_file) -> None:
+def update_json_entry(id: str, filename: str = CACHE_FILE) -> None:
     data: list[GameData] = get_data_from_json(filename)
     _, i = get_data_from_jsonid(id, data)
 

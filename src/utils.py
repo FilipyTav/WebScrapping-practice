@@ -1,4 +1,5 @@
 import json
+import time
 import os
 from typing import TypedDict, cast
 
@@ -14,16 +15,18 @@ class GameData(TypedDict):
     release_date: str
 
 
-cache_file: str = "game_data.json"
+CACHE_FILE: str = "game_data.json"
+METADATA_FILE: str = "cache_metadata.json"
+SECONDS_IN_DAY: int = 60 * 60 * 24
 
 
-def save_to_json(data: GameData | list[GameData], filename: str = cache_file) -> None:
+def save_to_json(data: GameData | list[GameData], filename: str = CACHE_FILE) -> None:
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     print(f"Dados salvos em {filename}")
 
 
-def append_to_json(new_data: GameData, filename: str = cache_file) -> None:
+def append_to_json(new_data: GameData, filename: str = CACHE_FILE) -> None:
     data_list: GameData | list[GameData] = get_data_from_json()
     if not data_list:
         data_list = []
@@ -53,7 +56,7 @@ def get_data_from_jsonid(id: str, data: list[GameData]) -> tuple[GameData, int]:
     return cast(GameData, {}), -1
 
 
-def get_data_from_json(filename: str = cache_file) -> list[GameData]:
+def get_data_from_json(filename: str = CACHE_FILE) -> list[GameData]:
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             try:
@@ -66,3 +69,25 @@ def get_data_from_json(filename: str = cache_file) -> list[GameData]:
 # In cents
 def format_price(value: int) -> str:
     return f"R$ {value / 100:.2f}".replace(".", ",")
+
+
+def should_update_cache() -> bool:
+    """>24 hours elapsed since last update"""
+    if not os.path.exists(METADATA_FILE):
+        return True
+
+    with open(METADATA_FILE, "r") as f:
+        try:
+            metadata: dict[str, int] = json.load(f)
+            last_update: int = metadata.get("last_update", 0)
+        except json.JSONDecodeError:
+            return True
+
+    current_time: float = time.time()
+    return (current_time - last_update) >= SECONDS_IN_DAY
+
+
+def update_timestamp() -> None:
+    """Saves the current time to the metadata file."""
+    with open(METADATA_FILE, "w") as f:
+        json.dump({"last_update": time.time()}, f)
