@@ -2,6 +2,7 @@ import json
 import time
 import os
 from typing import TypedDict, cast
+from pathlib import Path
 
 
 class GameData(TypedDict):
@@ -15,18 +16,23 @@ class GameData(TypedDict):
     release_date: str
 
 
-CACHE_FILE: str = "game_data.json"
-METADATA_FILE: str = "cache_metadata.json"
+BASE_DIR = Path(__file__).resolve().parent
+
+CACHE_DIR: Path = BASE_DIR / "cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+CACHE_FILE: Path = CACHE_DIR / "game_data.json"
+METADATA_FILE: Path = CACHE_DIR / "cache_metadata.json"
 SECONDS_IN_DAY: int = 60 * 60 * 24
 
 
-def save_to_json(data: GameData | list[GameData], filename: str = CACHE_FILE) -> None:
+def save_to_json(data: GameData | list[GameData], filename: Path = CACHE_FILE) -> None:
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     print(f"Dados salvos em {filename}")
 
 
-def append_to_json(new_data: GameData, filename: str = CACHE_FILE) -> None:
+def append_to_json(new_data: GameData, filename: Path = CACHE_FILE) -> None:
     data_list: GameData | list[GameData] = get_data_from_json()
     if not data_list:
         data_list = []
@@ -56,7 +62,7 @@ def get_data_from_jsonid(id: str, data: list[GameData]) -> tuple[GameData, int]:
     return cast(GameData, {}), -1
 
 
-def get_data_from_json(filename: str = CACHE_FILE) -> list[GameData]:
+def get_data_from_json(filename: Path = CACHE_FILE) -> list[GameData]:
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             try:

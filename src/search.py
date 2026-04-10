@@ -1,3 +1,4 @@
+from pathlib import Path
 import requests
 from requests import Response
 from bs4 import BeautifulSoup, Tag
@@ -11,9 +12,8 @@ from utils import (
     save_to_json,
 )
 
-name: str = "Stardew Valley"
-root_search_url: str = "https://store.steampowered.com/search/?term="
-headers: dict[str, str] = {
+ROOT_SEARCH_URL: str = "https://store.steampowered.com/search/?term="
+HEADERS: dict[str, str] = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json, text/plain, */*",
     "Accept-Language": "pt-BR,pt;q=0.9",
@@ -23,7 +23,7 @@ headers: dict[str, str] = {
 
 
 def get_id_from_name(name: str) -> str:
-    response: Response = requests.get(root_search_url + name, headers=headers)
+    response: Response = requests.get(ROOT_SEARCH_URL + name, headers=HEADERS)
 
     try:
         if response.status_code == 200:
@@ -62,11 +62,12 @@ def get_search_url(id: str) -> str:
 
 
 def get_data_from_id(id: str) -> GameData:
+    name: str = ""
     try:
         # Get game data
         json_url: str = get_search_url(id)
 
-        response: Response = requests.get(json_url, headers=headers)
+        response: Response = requests.get(json_url, headers=HEADERS)
 
         if response.status_code == 200:
             data: dict[str, Any] = response.json()
@@ -79,9 +80,10 @@ def get_data_from_id(id: str) -> GameData:
                 website: str = game_info.get("website", "")
                 if not website:
                     website = game_info.get("support_info", {}).get("url", "")
+                name = game_info.get("name", "")
 
                 return {
-                    "name": game_info.get("name", ""),
+                    "name": name,
                     "appid": id,
                     "price": price,
                     "developers": game_info.get("developers", []),
@@ -105,7 +107,7 @@ def get_data_from_id(id: str) -> GameData:
     return cast(GameData, {})
 
 
-def update_json_entry(id: str, filename: str = CACHE_FILE) -> GameData:
+def update_json_entry(id: str, filename: Path = CACHE_FILE) -> GameData:
     data: list[GameData] = get_data_from_json(filename)
     game_info, i = get_data_from_jsonid(id, data)
 

@@ -1,5 +1,4 @@
 .venv/
 **/__pycache__/
 *.py[cod]
-game_data.json
-cache_metadata.json
+**/cache/*
