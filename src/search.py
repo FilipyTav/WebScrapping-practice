@@ -16,7 +16,7 @@ ROOT_SEARCH_URL: str = "https://store.steampowered.com/search/?term="
 HEADERS: dict[str, str] = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "pt-BR,pt;q=0.9",
+    # "Accept-Language": "pt-BR,pt;q=0.9",
     "Cookie": "birthtime=283996801; lastagecheckage=1-0-1979; wants_mature_content=1",
     "Referer": "https://store.steampowered.com/",
 }
