@@ -14,18 +14,16 @@ class GameData(TypedDict):
     release_date: str
 
 
-json_file_name: str = "game_data.json"
+cache_file: str = "game_data.json"
 
 
-def save_to_json(
-    data: GameData | list[GameData], filename: str = json_file_name
-) -> None:
+def save_to_json(data: GameData | list[GameData], filename: str = cache_file) -> None:
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
-    print(f"Data successfully saved to {filename}")
+    print(f"Dados salvos em {filename}")
 
 
-def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
+def append_to_json(new_data: GameData, filename: str = cache_file) -> None:
     data_list: GameData | list[GameData] = get_data_from_json()
     if not data_list:
         data_list = []
@@ -34,8 +32,6 @@ def append_to_json(new_data: GameData, filename: str = json_file_name) -> None:
 
     data_list.append(new_data)
     save_to_json(data_list, filename)
-
-    print(f"Data successfully appended to {filename}")
 
 
 def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
@@ -49,15 +45,15 @@ def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
     return False
 
 
-def get_data_from_jsonid(id: str, data: list[GameData]) -> GameData:
-    for d in data:
+def get_data_from_jsonid(id: str, data: list[GameData]) -> tuple[GameData, int]:
+    for i, d in enumerate(data):
         if d["appid"] == id:
-            return d
+            return d, i
 
-    return cast(GameData, {})
+    return cast(GameData, {}), -1
 
 
-def get_data_from_json(filename: str = json_file_name) -> list[GameData]:
+def get_data_from_json(filename: str = cache_file) -> list[GameData]:
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             try:

@@ -3,7 +3,13 @@ from requests import Response
 from bs4 import BeautifulSoup, Tag
 from typing import Any, cast
 
-from utils import GameData
+from utils import (
+    GameData,
+    cache_file,
+    get_data_from_json,
+    get_data_from_jsonid,
+    save_to_json,
+)
 
 name: str = "Stardew Valley"
 root_search_url: str = "https://store.steampowered.com/search/?term="
@@ -97,3 +103,13 @@ def get_data_from_id(id: str) -> GameData:
         print(f"Error: {e}")
 
     return cast(GameData, {})
+
+
+def update_json_entry(id: str, filename: str = cache_file) -> None:
+    data: list[GameData] = get_data_from_json(filename)
+    _, i = get_data_from_jsonid(id, data)
+
+    new_info: GameData = get_data_from_id(id)
+    data[i].update(new_info)
+
+    save_to_json(data)
