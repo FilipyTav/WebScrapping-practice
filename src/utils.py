@@ -94,6 +94,7 @@ def update_timestamp() -> None:
 
 
 def print_game_info(game: GameData) -> None:
+    clear_screen()
     separator = "-" * 40
 
     devs: str = ", ".join(game["developers"])
@@ -118,3 +119,7 @@ def print_game_info(game: GameData) -> None:
     )
 
     print(separator + "\n")
+
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
