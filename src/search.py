@@ -31,28 +31,29 @@ def get_id_from_name(name: str) -> str:
 
             first_result: Tag | None = soup.find("a", class_="search_result_row")
 
-            if first_result:
-                raw_id: str | list[str] | None = first_result.get("data-ds-appid")
-                # Forces to str
-                app_id: str = (
-                    ",".join(raw_id) if isinstance(raw_id, list) else (raw_id or "")
-                )
+            if not first_result:
+                raise ValueError(f"'{name}' não existe")
 
-                game_element: Tag | None = first_result.find("span", class_="title")
-                game_title: str = ""
-                if game_element:
-                    game_title = game_element.text
+            raw_id: str | list[str] | None = first_result.get("data-ds-appid")
+            # Forces to str
+            app_id: str = (
+                ",".join(raw_id) if isinstance(raw_id, list) else (raw_id or "")
+            )
 
-                print(f"Found Match: {game_title}")
-                print(f"AppID: {app_id}")
-                return app_id
+            game_element: Tag | None = first_result.find("span", class_="title")
+            game_title: str = ""
+            if game_element:
+                game_title = game_element.text
+
+            print(f"Found Match: {game_title}")
+            print(f"AppID: {app_id}")
+            return app_id
 
         elif response.status_code == 429:
             print("Rate limit!!!")
 
     except Exception as e:
-        print(f"Não foi possível encontrar o jogo {name}")
-        print(f"Error: {e}")
+        print(f"\n[!] Erro: {e} [!]")
 
     return ""
 

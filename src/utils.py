@@ -36,6 +36,9 @@ def save_to_json(data: GameData | list[GameData], filename: Path = CACHE_FILE) -
 
 def append_to_json(new_data: GameData, filename: Path = CACHE_FILE) -> None:
     """Appends GameData to CACHE_FILE"""
+    if not new_data:
+        return
+
     data_list: GameData | list[GameData] = get_data_from_json()
     if not data_list:
         data_list = []
@@ -61,6 +64,9 @@ def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
 def get_data_from_jsonid(id: str, data: list[GameData]) -> tuple[GameData, int]:
     """Returns game info and its index from data"""
     for i, d in enumerate(data):
+        if not d:
+            continue
+
         if d["appid"] == id:
             return d, i
 
@@ -106,6 +112,9 @@ def update_timestamp() -> None:
 
 
 def print_game_info(game: GameData) -> None:
+    if not game:
+        return
+
     clear_screen()
     separator = "-" * 40
 
@@ -114,6 +123,8 @@ def print_game_info(game: GameData) -> None:
 
     raw_score: int = game["metacritic_score"]
     score: str = f"{raw_score}/100" if raw_score >= 0 else "--------"
+
+    website: str = game["website"] or "--------"
 
     print()
     print(separator)
@@ -127,7 +138,7 @@ def print_game_info(game: GameData) -> None:
         f"Devs:         {devs}\n"
         f"Gêneros:      {genres}\n"
         f"Score:        {score}\n"
-        f"Website:      {game.get('website', '--------')}"
+        f"Website:      {website}"
     )
 
     print(separator + "\n")
