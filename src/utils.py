@@ -28,12 +28,14 @@ SECONDS_IN_DAY: int = 60 * 60 * 24
 
 
 def save_to_json(data: GameData | list[GameData], filename: Path = CACHE_FILE) -> None:
+    """Saves GameData to CACHE_FILE"""
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     print(f"Cache salvo em {filename}")
 
 
 def append_to_json(new_data: GameData, filename: Path = CACHE_FILE) -> None:
+    """Appends GameData to CACHE_FILE"""
     data_list: GameData | list[GameData] = get_data_from_json()
     if not data_list:
         data_list = []
@@ -45,6 +47,7 @@ def append_to_json(new_data: GameData, filename: Path = CACHE_FILE) -> None:
 
 
 def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
+    """Returns if game ID in cache"""
     if isinstance(data, list):
         for d in data:
             if d["appid"] == id:
@@ -56,6 +59,7 @@ def id_in_json(id: str, data: GameData | list[GameData]) -> bool:
 
 
 def get_data_from_jsonid(id: str, data: list[GameData]) -> tuple[GameData, int]:
+    """Returns game info and its index from data"""
     for i, d in enumerate(data):
         if d["appid"] == id:
             return d, i
@@ -64,6 +68,7 @@ def get_data_from_jsonid(id: str, data: list[GameData]) -> tuple[GameData, int]:
 
 
 def get_data_from_json(filename: Path = CACHE_FILE) -> list[GameData]:
+    """Returs full cache info as dict"""
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             try:
