@@ -70,6 +70,9 @@ def get_data_from_id(id: str) -> GameData:
                 price: str = game_info.get("price_overview", {}).get(
                     "final_formatted", "Free"
                 )
+                website: str = game_info.get("website", "")
+                if not website:
+                    website = game_info.get("support_info", {}).get("url", "")
 
                 return {
                     "name": game_info.get("name", ""),
@@ -77,11 +80,13 @@ def get_data_from_id(id: str) -> GameData:
                     "price": price,
                     "developers": game_info.get("developers", []),
                     "genres": [g["description"] for g in game_info.get("genres", [])],
-                    "website": game_info.get("website", ""),
+                    "website": website if website else "",
                     "metacritic_score": game_info.get("metacritic", {}).get(
                         "score", -1
                     ),
-                    "release_date": game_info.get("release_date", {}).get("date", "Em breve!")
+                    "release_date": game_info.get("release_date", {}).get(
+                        "date", "Em breve!"
+                    ),
                 }
 
         elif response.status_code == 429:

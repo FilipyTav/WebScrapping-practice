@@ -1,4 +1,4 @@
-from search import get_data_from_id, get_id_from_name, name
+from search import get_data_from_id, get_id_from_name
 from utils import (
     GameData,
     append_to_json,
@@ -7,8 +7,11 @@ from utils import (
 )
 
 if __name__ == "__main__":
+    game_name: str = input("Qual jogo deseja procurar?\n> ").strip()
+
     current_games: list[GameData] = get_data_from_json()
-    pid: str = get_id_from_name(name)
+
+    pid: str = get_id_from_name(game_name)
     query_game: GameData = get_data_from_jsonid(pid, current_games)
 
     if query_game:
