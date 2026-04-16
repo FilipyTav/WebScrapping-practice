@@ -29,8 +29,18 @@ cd WebScrapping-practice
 2. Crie um ambiente virtual:
 ```bash
 python -m venv venv
-source venv/Scripts/activate
 ```
+
+- Windows:
+```bash
+venv\Scripts\activate
+```
+
+- Linux:
+```bash
+source venv/bin/activate
+```
+
 3. Instale as dependências necessárias:
 ```bash
 pip install -r requirements.txt
