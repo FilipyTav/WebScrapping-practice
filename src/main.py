@@ -1,4 +1,4 @@
-from search import get_data_from_id, get_id_from_name, update_json_entry
+from search.search import get_data_from_id, get_id_from_name, update_json_entry
 from utils import (
     GameData,
     append_to_json,
