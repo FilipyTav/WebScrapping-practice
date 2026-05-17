@@ -16,7 +16,7 @@ class GameData(TypedDict):
     release_date: str
 
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
 CACHE_DIR: Path = BASE_DIR / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
