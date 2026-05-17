@@ -4,7 +4,7 @@ from requests import Response
 from bs4 import BeautifulSoup, Tag
 from typing import Any, cast
 
-from utils import (
+from utils.utils import (
     GameData,
     CACHE_FILE,
     get_data_from_json,
